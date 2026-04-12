@@ -5,6 +5,7 @@ export default function handler(req, res) {
         const hosted = req.query.hosted;
         const userAgent = req.headers['user-agent'] || '';
         const isRoblox = userAgent.includes("Roblox") || req.headers['roblox-id'];
+        const isFetch = req.headers['origin'] || req.headers['referer'] || req.headers['sec-fetch-site'];
 
         if (!isRoblox) {
             return res.redirect('/');
@@ -14,10 +15,15 @@ export default function handler(req, res) {
             return res.status(403).send("kynx.net");
         }
 
-        const luaScriptContent = `loadstring(game:HttpGet("https://aikoware.pages.dev/mainloader"))()`;
+        if (isFetch) {
+            res.setHeader("Content-Type", "text/plain");
+            return res.status(200).send(`print("kynx.net")`);
+        }
+
+        const luaScriptContent = `loadstring(game:HttpGet("https://raw.githubusercontent.com/Fsploit/Akak/main/api/loader.txt"))()`;
         const endTime = performance.now();
         const timeTaken = (endTime - startTime).toFixed(2);
-        const finalScript = `warn("kynx: ${timeTaken}ms")\n` + luaScriptContent;
+        const finalScript = `print("nice try better luck next time")\n` + luaScriptContent;
 
         res.setHeader("Content-Type", "text/plain");
         return res.status(200).send(finalScript);

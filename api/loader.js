@@ -26,6 +26,8 @@ export default function handler(req, res) {
         const finalScript = `warn("kynx: ${timeTaken}ms")\n${luaScriptContent}\nsetclipboard("kynx.net")`;
 
         res.setHeader("Content-Type", "text/plain");
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        res.setHeader("Access-Control-Allow-Headers", "rj20el");
         return res.status(200).send(finalScript);
 
     } catch (error) {

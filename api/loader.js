@@ -3,13 +3,13 @@ export default function handler(req, res) {
 
     try {
         const hosted = req.query.hosted;
-        const secret = req.headers['rj20el'];
+        const secret = req.headers['rj2014'];
         const userAgent = req.headers['user-agent'] || '';
-        const isRoblox = userAgent.includes("Roblox") || req.headers['roblox-id'] || !req.headers['accept']?.includes('text/html');
-
-        if (!isRoblox) {
-            return res.status(200).setHeader("Content-Type", "text/html").send(`<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=/"></head></html>`);
-        }
+        const referer = req.headers['referer'] || '';
+        
+        const isBrowser = userAgent.includes("Chrome") || userAgent.includes("Firefox") || userAgent.includes("Safari") || userAgent.includes("Edge") || referer.includes("google") || referer.includes("bing");
+        
+        const isExecutor = userAgent.includes("Roblox") || userAgent.includes("RBX") || userAgent === "" || req.headers['roblox-id'] || !isBrowser;
 
         if (hosted !== "mainloader") {
             return res.status(403).send("kynx.net");
@@ -20,14 +20,16 @@ export default function handler(req, res) {
             return res.status(403).send(`print("nice try better luck next time")`);
         }
 
+        if (!isExecutor) {
+            return res.status(404).send("Not Found");
+        }
+
         const luaScriptContent = `loadstring(game:HttpGet("https://vss.pandadevelopment.net/virtual/file/ea3100c66b9c4da3"))()`;
         const endTime = performance.now();
         const timeTaken = (endTime - startTime).toFixed(2);
-        const finalScript = `warn("kynx: ${timeTaken}ms")\n${luaScriptContent}\nsetclipboard("kynx.net")`;
+        const finalScript = `warn("kynx: ${timeTaken}ms")\n` + luaScriptContent;
 
         res.setHeader("Content-Type", "text/plain");
-        res.setHeader("Access-Control-Allow-Origin", "*");
-        res.setHeader("Access-Control-Allow-Headers", "rj20el");
         return res.status(200).send(finalScript);
 
     } catch (error) {

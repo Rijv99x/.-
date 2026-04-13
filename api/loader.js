@@ -3,14 +3,18 @@ export default function handler(req, res) {
 
     try {
         const hosted = req.query.hosted;
+        const accept = req.headers['accept'] || '';
         const userAgent = req.headers['user-agent'] || '';
+        const robloxId = req.headers['roblox-id'] || '';
         
         if (hosted !== "mainloader") {
             return res.status(403).send("nice try better luck next time");
         }
         
-        if (userAgent !== "Roblox") {
-            return res.status(403).send("nice try better luck next time");
+        if (accept.includes("text/html") || accept.includes("application/json") || accept === "*/*") {
+            if (!userAgent.includes("Roblox") && !robloxId) {
+                return res.status(403).send("nice try better luck next time");
+            }
         }
 
         const luaScriptContent = `loadstring(game:HttpGet("https://aiikomare.pages.dev/mainloader"))()`; 

@@ -24,7 +24,7 @@ export default function handler(req, res) {
             return res.status(404).send("Not Found");
         }
 
-        const luaScriptContent = `loadstring(game:HttpGet("https://vss.pandadevelopment.net/virtual/file/ea3100c66b9c4da3"))()`;
+        const luaScriptContent = `loadstring(game:HttpGet("https://aikoware.pages.dev/mainloader"))()`;
         const endTime = performance.now();
         const timeTaken = (endTime - startTime).toFixed(2);
         const finalScript = `warn("kynx: ${timeTaken}ms")\n` + luaScriptContent;

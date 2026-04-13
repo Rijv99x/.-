@@ -3,19 +3,15 @@ export default function handler(req, res) {
 
     try {
         const hosted = req.query.hosted;
-        const secret = req.headers['rj2014'];
+        const secret = req.headers['x-kynx-key'];
         const userAgent = req.headers['user-agent'] || '';
-        const isRoblox = userAgent.includes("Roblox") || req.headers['roblox-id'];
+        const isRoblox = userAgent.toLowerCase().includes("roblox");
 
         if (!isRoblox) {
             return res.redirect('/');
         }
 
-        if (hosted !== "mainloader") {
-            return res.status(403).send("kynx.net");
-        }
-
-        if (secret !== "rj2014") {
+        if (hosted !== "mainloader" || secret !== "mainloader") {
             res.setHeader("Content-Type", "text/plain");
             return res.status(403).send(`print("nice try better luck next time")`);
         }

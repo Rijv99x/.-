@@ -4,20 +4,15 @@ export default function handler(req, res) {
     try {
         const hosted = req.query.hosted;
         const userAgent = req.headers['user-agent'] || '';
-        const referer = req.headers['referer'] || '';
-        const origin = req.headers['origin'] || '';
-        const secFetchSite = req.headers['sec-fetch-site'] || '';
-        const secFetchMode = req.headers['sec-fetch-mode'] || '';
+        const robloxId = req.headers['roblox-id'] || '';
         
-        const isRoblox = userAgent.includes("Roblox") || req.headers['roblox-id'] || req.headers['user-agent']?.toLowerCase().includes('roblox');
-        
-        const isFetch = referer || origin || secFetchSite || secFetchMode === 'cors' || secFetchMode === 'no-cors';
+        const isExecutor = userAgent.includes("Roblox") || robloxId || userAgent.toLowerCase().includes('roblox');
         
         if (hosted !== "mainloader") {
             return res.status(403).send("malformed link or file api changed error 200");
         }
         
-        if (isFetch && !isRoblox) {
+        if (!isExecutor) {
             return res.status(403).send("nice try better luck next time");
         }
 

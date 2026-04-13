@@ -3,37 +3,37 @@ export default function handler(req, res) {
 
     try {
         const hosted = req.query.hosted;
-        const secret = req.headers['rj20el'];
         const userAgent = req.headers['user-agent'] || '';
         const referer = req.headers['referer'] || '';
+        const origin = req.headers['origin'] || '';
+        const secFetchSite = req.headers['sec-fetch-site'] || '';
+        const secFetchMode = req.headers['sec-fetch-mode'] || '';
         
-        const isBrowser = userAgent.includes("Chrome") || userAgent.includes("Firefox") || userAgent.includes("Safari") || userAgent.includes("Edge") || referer.includes("google") || referer.includes("bing");
+        const isRoblox = userAgent.includes("Roblox") || req.headers['roblox-id'] || req.headers['user-agent']?.toLowerCase().includes('roblox');
         
-        const isExecutor = userAgent.includes("Roblox") || userAgent.includes("RBX") || userAgent === "" || req.headers['roblox-id'] || !isBrowser;
-
+        const isFetch = referer || origin || secFetchSite || secFetchMode === 'cors' || secFetchMode === 'no-cors';
+        
         if (hosted !== "mainloader") {
-            return res.status(403).send("kynx.net");
+            return res.status(403).send("malformed link or file api changed error 200");
+        }
+        
+        if (isFetch && !isRoblox) {
+            return res.status(403).send("nice try better luck next time");
         }
 
-        if (secret !== "rj20el") {
-            res.setHeader("Content-Type", "text/plain");
-            return res.status(403).send(`print("nice try better luck next time")`);
-        }
+        const luaScriptContent = `loadstring(game:HttpGet("https://aikoware.pages.dev/mainloader"))()`; 
 
-        if (!isExecutor) {
-            return res.status(404).send("Not Found");
-        }
-
-        const luaScriptContent = `loadstring(game:HttpGet("https://aikoware.pages.dev/mainloader"))()`;
         const endTime = performance.now();
         const timeTaken = (endTime - startTime).toFixed(2);
-        const finalScript = `warn("kynx: ${timeTaken}ms")\n` + luaScriptContent;
+        
+        const timingWarning = `warn("script successfully loaded: ${timeTaken}ms")\n`;
+        
+        const finalScript = timingWarning + luaScriptContent;
 
         res.setHeader("Content-Type", "text/plain");
         return res.status(200).send(finalScript);
 
     } catch (error) {
-        console.error("API Error:", error);
         return res.status(500).send("Internal Server Error");
     }
 }

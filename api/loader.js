@@ -3,7 +3,7 @@ export default function handler(req, res) {
 
     try {
         const hosted = req.query.hosted;
-        const secret = req.headers['x-kynx-key'];
+        const secret = req.headers['rj2014'];
         const userAgent = req.headers['user-agent'] || '';
         const isRoblox = userAgent.includes("Roblox") || req.headers['roblox-id'];
 

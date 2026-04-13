@@ -3,9 +3,10 @@ export default function handler(req, res) {
 
     try {
         const hosted = req.query.hosted;
+        const key = req.query.key;
         const userAgent = req.headers['user-agent'] || '';
-        const secret = req.headers['x-kynx-key'];
         const isRoblox = userAgent.includes("Roblox") || req.headers['roblox-id'];
+        const placeId = req.headers['roblox-id'] || req.headers['roblox-game-id'];
 
         if (!isRoblox) {
             return res.redirect('/');
@@ -15,7 +16,12 @@ export default function handler(req, res) {
             return res.status(403).send("kynx.net");
         }
 
-        if (secret !== "rj201") {
+        if (!placeId) {
+            res.setHeader("Content-Type", "text/plain");
+            return res.status(403).send(`print("nice try better luck next time")`);
+        }
+
+        if (key !== "rj2014") {
             res.setHeader("Content-Type", "text/plain");
             return res.status(403).send(`print("nice try better luck next time")`);
         }

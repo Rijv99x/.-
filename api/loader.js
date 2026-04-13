@@ -3,7 +3,7 @@ export default function handler(req, res) {
 
     try {
         const hosted = req.query.hosted;
-        const secret = req.headers['rj2014'];
+        const secret = req.headers['rj20el'];
         const userAgent = req.headers['user-agent'] || '';
         const referer = req.headers['referer'] || '';
         

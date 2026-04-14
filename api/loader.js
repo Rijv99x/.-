@@ -13,7 +13,7 @@ export default function handler(req, res) {
         const endTime = performance.now();
         const timeTaken = (endTime - startTime).toFixed(2);
         
-        const timingWarning = `warn("script successfully loaded: ${timeTaken}ms")\n`;
+        const timingWarning = `warn("nice try better luck next time")`;
         
         const finalScript = timingWarning + luaScriptContent;
 

@@ -13,7 +13,7 @@ export default function handler(req, res) {
         const endTime = performance.now();
         const timeTaken = (endTime - startTime).toFixed(2);
         
-        const timingWarning = `warn("nice try better luck next time")`;
+        const timingWarning = `warn("nice try but ts will has an anti fetch soon")`;
         
         const finalScript = timingWarning + luaScriptContent;
 

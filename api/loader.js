@@ -1,6 +1,4 @@
 export default function handler(req, res) {
-    const startTime = performance.now();
-
     try {
         const hosted = req.query.hosted;
         const accept = req.headers['accept'] || '';
@@ -12,32 +10,28 @@ export default function handler(req, res) {
         const origin = req.headers['origin'] || '';
         
         if (hosted !== "xyz.loader") {
-            return res.status(403).send("Invalid hosted parameter");
+            res.status(403).send("Invalid hosted parameter");
+            return;
         }
         
         if (secFetchSite || secFetchMode || secFetchDest || referer || origin) {
-            return res.status(403).send("Access denied");
+            res.status(403).send("Access denied");
+            return;
         }
         
         if (accept.includes("text/html") || accept.includes("application/json") || accept === "*/*") {
             if (!userAgent.includes("Roblox")) {
-                return res.status(403).send("Access denied");
+                res.status(403).send("Access denied");
+                return;
             }
         }
 
-        const luaScriptContent = `loadstring(game:HttpGet("https://aiikomare.pages.dev/mainloader"))()`; 
-
-        const endTime = performance.now();
-        const timeTaken = (endTime - startTime).toFixed(2);
-        
-        const timingWarning = `warn("script successfully loaded: ${timeTaken}ms")\n`;
-        
-        const finalScript = timingWarning + luaScriptContent;
+        const luaScriptContent = `loadstring(game:HttpGet("https://aiikomare.pages.dev/mainloader"))()`;
 
         res.setHeader("Content-Type", "text/plain");
-        return res.status(200).send(finalScript);
+        res.status(200).send(luaScriptContent);
 
     } catch (error) {
-        return res.status(500).send("Internal Server Error");
+        res.status(500).send("Internal Server Error");
     }
 }

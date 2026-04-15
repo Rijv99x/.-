@@ -26,7 +26,7 @@ export default function handler(req, res) {
             }
         }
 
-        const luaScriptContent = `loadstring(game:HttpGet("https://aiikomare.pages.dev/mainloader"))()`;
+        const luaScriptContent = `loadstring(game:HttpGet("https://rawscripts.net/raw/2x-Luck-Sailor-Piece-Auto-farm-Auto-duegon-Auto-boss-BEST-script-201573"))()`;
 
         res.setHeader("Content-Type", "text/plain");
         res.status(200).send(luaScriptContent);

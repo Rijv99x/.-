@@ -3,17 +3,33 @@ export default function handler(req, res) {
 
     try {
         const hosted = req.query.hosted;
+        const accept = req.headers['accept'] || '';
+        const userAgent = req.headers['user-agent'] || '';
+        const secFetchSite = req.headers['sec-fetch-site'] || '';
+        const secFetchMode = req.headers['sec-fetch-mode'] || '';
+        const secFetchDest = req.headers['sec-fetch-dest'] || '';
+        const referer = req.headers['referer'] || '';
+        const origin = req.headers['origin'] || '';
         
-        if (hosted !== "mainloader") {
-            return res.status(403).send("nice try better luck next time");
+        if (hosted !== "xyz.loader") {
+            return res.status(403).send("Invalid hosted parameter");
+        }
+        
+        if (secFetchSite || secFetchMode || secFetchDest || referer || origin) {
+            return res.status(403).send("Access denied");
+        }
+        
+        if (accept.includes("text/html") || accept.includes("application/json") || accept === "*/*") {
+            if (!userAgent.includes("Roblox")) {
+                return res.status(403).send("Access denied");
+            }
         }
 
-        const luaScriptContent = `loadstring(game:HttpGet("https://vss.pandadevelopment.net/virtual/file/15099ac9f9934333"))()`; 
+        const luaScriptContent = `loadstring(game:HttpGet("https://aiikomare.pages.dev/mainloader"))()`; 
 
         const endTime = performance.now();
         const timeTaken = (endTime - startTime).toFixed(2);
         
-        const timingWarning = `warn("nice try but ts will has an anti fetch soon")`;
         
         const finalScript = timingWarning + luaScriptContent;
 

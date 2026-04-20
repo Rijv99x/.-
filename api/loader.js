@@ -1,37 +1,50 @@
 export default function handler(req, res) {
     try {
-        const hosted = req.query.hosted;
-        const accept = req.headers['accept'] || '';
-        const userAgent = req.headers['user-agent'] || '';
-        const secFetchSite = req.headers['sec-fetch-site'] || '';
-        const secFetchMode = req.headers['sec-fetch-mode'] || '';
-        const secFetchDest = req.headers['sec-fetch-dest'] || '';
-        const referer = req.headers['referer'] || '';
-        const origin = req.headers['origin'] || '';
-        
+        const hosted = req.query.hosted || "";
+        const userAgent = (req.headers["user-agent"] || "").toLowerCase();
+        const accept = req.headers["accept"] || "";
+
         if (hosted !== "xyz.loader") {
-            res.status(403).send("Invalid hosted parameter");
-            return;
-        }
-        
-        if (secFetchSite || secFetchMode || secFetchDest || referer || origin) {
-            res.status(403).send("Access denied");
-            return;
-        }
-        
-        if (accept.includes("text/html") || accept.includes("application/json") || accept === "*/*") {
-            if (!userAgent.includes("Roblox")) {
-                res.status(403).send("Access denied");
-                return;
-            }
+            return res.status(403).end();
         }
 
-        const luaScriptContent = `loadstring(game:HttpGet("https://rawscripts.net/raw/2x-Luck-Sailor-Piece-Auto-farm-Auto-duegon-Auto-boss-BEST-script-201573"))()`;
+        if (!userAgent.includes("roblox")) {
+            return res.status(403).end();
+        }
+
+        if (
+            userAgent.includes("mozilla") ||
+            userAgent.includes("chrome") ||
+            userAgent.includes("safari") ||
+            userAgent.includes("firefox") ||
+            userAgent.includes("postman") ||
+            userAgent.includes("curl") ||
+            userAgent.includes("wget") ||
+            userAgent.includes("axios") ||
+            userAgent.includes("node")
+        ) {
+            return res.status(403).end();
+        }
+
+        if (accept && accept !== "*/*") {
+            return res.status(403).end();
+        }
+
+        if (
+            req.headers["sec-fetch-site"] ||
+            req.headers["sec-fetch-mode"] ||
+            req.headers["sec-fetch-dest"] ||
+            req.headers["referer"] ||
+            req.headers["origin"]
+        ) {
+            return res.status(403).end();
+        }
+
+        const lua = `loadstring(game:HttpGet("https://rawscripts.net/raw/2x-Luck-Sailor-Piece-Auto-farm-Auto-duegon-Auto-boss-BEST-script-201573"))()`;
 
         res.setHeader("Content-Type", "text/plain");
-        res.status(200).send(luaScriptContent);
-
-    } catch (error) {
-        res.status(500).send("Internal Server Error");
+        return res.status(200).send(lua);
+    } catch {
+        return res.status(500).end();
     }
 }

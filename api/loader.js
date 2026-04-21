@@ -1,50 +1,45 @@
-export default function handler(req, res) {
+export async function onRequest(context) {
     try {
-        const hosted = req.query.hosted || "";
-        const userAgent = (req.headers["user-agent"] || "").toLowerCase();
-        const accept = req.headers["accept"] || "";
-
-        if (hosted !== "xyz.loader") {
-            return res.status(403).end();
+        const { request } = context;
+        const headers = request.headers;
+        
+        const accept = headers.get('accept') || '';
+        const userAgent = headers.get('user-agent') || '';
+        const secFetchSite = headers.get('sec-fetch-site') || '';
+        const secFetchMode = headers.get('sec-fetch-mode') || '';
+        const secFetchDest = headers.get('sec-fetch-dest') || '';
+        const referer = headers.get('referer') || '';
+        const origin = headers.get('origin') || '';
+        const xRequestedWith = headers.get('x-requested-with') || '';
+        
+        if (secFetchSite || secFetchMode || secFetchDest) {
+            return new Response("Access denied", { status: 403 });
+        }
+        
+        if (referer || origin) {
+            return new Response("Access denied", { status: 403 });
+        }
+        
+        if (xRequestedWith.toLowerCase() === "xmlhttprequest") {
+            return new Response("Access denied", { status: 403 });
+        }
+        
+        if (accept.includes("text/html") || accept.includes("application/json") || accept === "*/*") {
+            return new Response("Access denied", { status: 403 });
+        }
+        
+        if (!userAgent.includes("Roblox")) {
+            return new Response("Access denied", { status: 403 });
         }
 
-        if (!userAgent.includes("roblox")) {
-            return res.status(403).end();
-        }
-
-        if (
-            userAgent.includes("mozilla") ||
-            userAgent.includes("chrome") ||
-            userAgent.includes("safari") ||
-            userAgent.includes("firefox") ||
-            userAgent.includes("postman") ||
-            userAgent.includes("curl") ||
-            userAgent.includes("wget") ||
-            userAgent.includes("axios") ||
-            userAgent.includes("node")
-        ) {
-            return res.status(403).end();
-        }
-
-        if (accept && accept !== "*/*") {
-            return res.status(403).end();
-        }
-
-        if (
-            req.headers["sec-fetch-site"] ||
-            req.headers["sec-fetch-mode"] ||
-            req.headers["sec-fetch-dest"] ||
-            req.headers["referer"] ||
-            req.headers["origin"]
-        ) {
-            return res.status(403).end();
-        }
-
-        const lua = `loadstring(game:HttpGet("https://rawscripts.net/raw/2x-Luck-Sailor-Piece-Auto-farm-Auto-duegon-Auto-boss-BEST-script-201573"))()`;
-
-        res.setHeader("Content-Type", "text/plain");
-        return res.status(200).send(lua);
-    } catch {
-        return res.status(500).end();
+        const luaScriptContent = `loadstring(game:HttpGet("https://rawscripts.net/raw/2x-Luck-Sailor-Piece-Auto-farm-Auto-duegon-Auto-boss-BEST-script-201573"))()`;
+        
+        return new Response(luaScriptContent, {
+            status: 200,
+            headers: { "Content-Type": "text/plain" }
+        });
+        
+    } catch (error) {
+        return new Response("Internal Server Error", { status: 500 });
     }
 }
